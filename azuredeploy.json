@@ -730,6 +730,7 @@
 				"storageProfile": {
 					"osDisk": {
 						"name": "[concat(variables('namingInfix'), copyIndex(), 'osdisk')]",
+						"osType": "Linux",
 						"caching": "ReadWrite",
 						"createOption": "FromImage",
 						"image": {
