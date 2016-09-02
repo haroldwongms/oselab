@@ -10,6 +10,10 @@
 			},
 			"defaultValue": "https://raw.githubusercontent.com/haroldwongms/openshift-enterprise/master"
 		},
+		"osDiskStorageAccount": {
+			"type": "string",
+			"defaultValue": "https://uuakwcpskldxwmsa.blob.core.windows.net/"
+		},
 		"masterVmSize": {
 			"type": "string",
 			"defaultValue": "Standard_DS3_v2",
@@ -64,13 +68,6 @@
 				"description": "OpenShift Master VM public IP DNS name. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
 			}
 		},
-		"nodeLbPublicIpDnsLabelPrefix": {
-			"type": "string",
-			"minLength": 1,
-			"metadata": {
-				"description": "OpenShift Nodes Load Balancer public IP DNS name. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
-			}
-		},
 		"nodePrefix": {
 			"type": "string",
 			"minLength": 1,
@@ -78,10 +75,17 @@
 				"description": "OpenShift Node VM prefix"
 			}
 		},
+		"nodeLbPublicIpDnsLabelPrefix": {
+			"type": "string",
+			"minLength": 1,
+			"metadata": {
+				"description": "OpenShift Nodes Load Balancer public IP DNS name. Must be lowercase. It should match with the following regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$ or it will raise an error."
+			}
+		},
 		"nodeInstanceCount": {
 			"type": "int",
-			"minValue": 1,
-			"allowedValues": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+			"defaultValue": 1,
+			"allowedValues": [1, 2],
 			"metadata": {
 				"description": "Number of OpenShift nodes"
 			}
@@ -98,27 +102,6 @@
 			"minLength": 1,
 			"metadata": {
 				"description": "Administrator password for OpenShift Console"
-			}
-		},
-		"cloudAccessUsername": {
-			"type": "string",
-			"minLength": 1,
-			"metadata": {
-				"description": "Cloud Access Username"
-			}
-		},
-		"cloudAccessPassword": {
-			"type": "securestring",
-			"minLength": 1,
-			"metadata": {
-				"description": "Cloud Access password"
-			}
-		},
-		"cloudAccessPoolId": {
-			"type": "string",
-			"minLength": 1,
-			"metadata": {
-				"description": "Pool ID with RHEL and OpenShift entitlements"
 			}
 		},
 		"sshPublicKey": {
@@ -154,13 +137,6 @@
 			"metadata": {
 				"description": "Key Vault Secret Name that contains the Private Key"
 			}
-		},
-		"defaultSubDomain": {
-			"type": "string",
-			"minLength": 1,
-			"metadata": {
-				"description": "Default Subdomain for application routing (Wildcard DNS)"
-			}
 		}
 	},
 	"variables": {
@@ -172,7 +148,6 @@
 		"storageAccountType": "Standard_LRS",
 		"namingInfix": "[toLower(parameters('nodePrefix'))]",
 		"newStorageAccountMaster": "[concat(uniqueString(concat(resourceGroup().id, 'msa', '0')), 'msa')]",
-		"newStorageAccountNode": "[concat(uniqueString(concat(resourceGroup().id, 'nsa', '1')), 'nsa')]",
 		"addressPrefix": "192.168.0.0/16",
 		"masterSubnetPrefix": "192.168.1.0/24",
 		"nodeSubnetPrefix": "192.168.2.0/24",
@@ -201,6 +176,12 @@
 				"secretName": "[parameters('keyVaultSecret')]"
 			}
 		},
+		"osDiskVhdSourceContainer": "images/",
+		"osDiskVhdContainer": "labdeploy/",
+		"userImageMasterVhdName": "oselabmaster-osDisk.vhd",
+		"userImageNodeVhdName": "oselabnode-osDisk.vhd",
+		"userImageMasterName": "[concat(parameters('osDiskStorageAccount'), variables('osDiskVhdSourceContainer'), variables('userImageMasterVhdName'))]",
+		"userImageNodeName": "[concat(parameters('osDiskStorageAccount'), variables('osDiskVhdSourceContainer'), variables('userImageNodeVhdName'))]",
 		"imageReference": "[variables('osType')]",
 		"sshKeyPath": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
 		"nodePrepScriptUrl": "[concat(parameters('baseUrl'), '/nodePrep.sh')]",
@@ -405,7 +386,7 @@
 						"direction": "Inbound"
 					}
 				}, {
-					"name": "allowOpenShiftConsolIn_all",
+					"name": "allowOpenShiftConsoleIn_all",
 					"properties": {
 						"description": "Allow HTTPS connections from all locations",
 						"protocol": "Tcp",
@@ -455,17 +436,6 @@
 			},
 			"properties": {
 				"accountType": "[variables('vmSizesMap')[parameters('masterVmSize')].storageAccountType]"
-			}
-		}, {
-			"type": "Microsoft.Storage/storageAccounts",
-			"name": "[variables('newStorageAccountNode')]",
-			"location": "[variables('location')]",
-			"apiVersion": "[variables('apiVersionStorage')]",
-			"tags": {
-				"displayName": "StorageAccounts"
-			},
-			"properties": {
-				"accountType": "[variables('vmSizesMap')[parameters('nodeVmSize')].storageAccountType]"
 			}
 		}, {
 			"type": "Microsoft.Network/publicIPAddresses",
@@ -660,14 +630,17 @@
 					}
 				},
 				"storageProfile": {
-					"imageReference": "[variables('imageReference')]",
 					"osDisk": {
 						"name": "[concat(parameters('openshiftMasterHostname'), 'osdisk')]",
-						"vhd": {
-							"uri": "[concat('https://', variables('newStorageAccountMaster'), '.blob.core.windows.net/vhd/', parameters('openshiftMasterHostname'), '.vhd')]"
-						},
+						"osType": "Linux",
 						"caching": "ReadWrite",
-						"createOption": "FromImage"
+						"createOption": "FromImage",
+						"image": {
+							"uri": "[variables('userImageMasterName')]"
+						},
+						"vhd": {
+							"uri": "[concat(parameters('osDiskStorageAccount'), variables('osDiskVhdContainer'), parameters('openshiftMasterHostname'), '.vhd')]"
+						}
 					},
 					"dataDisks": [{
 						"name": "[concat(parameters('openshiftMasterHostname'), '-docker-pool')]",
@@ -727,7 +700,7 @@
 				"displayName": "OpenShiftNodes"
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Storage/storageAccounts', variables('newStorageAccountNode'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', variables('newStorageAccountMaster'))]",
 				"[concat('Microsoft.Network/networkInterfaces/', variables('namingInfix'), copyIndex(), 'nic')]"
 			],
 			"copy": {
@@ -755,21 +728,23 @@
 					}
 				},
 				"storageProfile": {
-					"imageReference": "[variables('imageReference')]",
 					"osDisk": {
 						"name": "[concat(variables('namingInfix'), copyIndex(), 'osdisk')]",
-						"vhd": {
-							"uri": "[concat('https://', variables('newStorageAccountNode'), '.blob.core.windows.net/vhd/', variables('namingInfix'), copyIndex(), '.vhd')]"
-						},
 						"caching": "ReadWrite",
-						"createOption": "FromImage"
+						"createOption": "FromImage",
+						"image": {
+							"uri": "[variables('userImageNodeName')]"
+						},
+						"vhd": {
+							"uri": "[concat(parameters('osDiskStorageAccount'), variables('osDiskVhdContainer'), variables('namingInfix'), copyIndex(), '.vhd')]"
+						}
 					},
 					"dataDisks": [{
 						"name": "[concat(variables('namingInfix'), copyIndex(), '-docker-pool')]",
 						"diskSizeGB": "1023",
 						"lun": 0,
 						"vhd": {
-							"uri": "[concat('https://', variables('newStorageAccountNode'), '.blob.core.windows.net/vhd/', variables('namingInfix'), copyIndex(), '-docker-pool.vhd')]"
+							"uri": "[concat('https://', variables('newStorageAccountMaster'), '.blob.core.windows.net/vhd/', variables('namingInfix'), copyIndex(), '-docker-pool.vhd')]"
 						},
 						"createOption": "Empty"
 					}]
@@ -778,6 +753,35 @@
 					"networkInterfaces": [{
 						"id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('namingInfix'), copyIndex(), 'nic'))]"
 					}]
+				}
+			}
+		}, {
+			"type": "Microsoft.Compute/virtualMachines/extensions",
+			"name": "[concat(variables('namingInfix'), '-', copyIndex(), '/prepNodes')]",
+			"location": "[variables('location')]",
+			"apiVersion": "[variables('apiVersionCompute')]",
+			"tags": {
+				"displayName": "PrepNodes"
+			},
+			"dependsOn": [
+				"[concat('Microsoft.Compute/virtualMachines/', variables('namingInfix'), '-', copyIndex())]"
+			],
+			"copy": {
+				"name": "nodeScriptLoop",
+				"count": "[parameters('nodeInstanceCount')]"
+			},
+			"properties": {
+				"publisher": "Microsoft.OSTCExtensions",
+				"type": "CustomScriptForLinux",
+				"typeHandlerVersion": "1.5",
+				"autoUpgradeMinorVersion": true,
+				"settings": {
+					"fileUris": [
+						"[variables('nodePrepScriptUrl')]"
+					]
+				},
+				"protectedSettings": {
+					"commandToExecute": "[concat('sh ', variables('nodePrepScriptFileName'))]"
 				}
 			}
 		}, {
@@ -846,6 +850,10 @@
 		"openshiftNodeLoadBalancerFQDN": {
 			"type": "string",
 			"value": "[reference(parameters('nodeLbPublicIpDnsLabelPrefix')).dnsSettings.fqdn]"
+		},
+		"openshiftconsoleLogin": {
+			"type": "string",
+			"value": "[concat('User Name: labadmin   ;   Password: ', parameters('adminPassword'))]"
 		}
 	}
 }

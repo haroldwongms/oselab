@@ -14,6 +14,18 @@ NODEPREFIX=$7
 NODECOUNT=$8
 ROUTING=$9
 
+# Create thin pool logical volume for Docker
+echo $(date) " - Creating thin pool logical volume for Docker and staring service"
+
+echo "DEVS=/dev/sdc" >> /etc/sysconfig/docker-storage-setup
+echo "VG=docker-vg" >> /etc/sysconfig/docker-storage-setup
+docker-storage-setup
+
+# Enable and start Docker services
+
+systemctl enable docker
+systemctl start docker
+
 DOMAIN=$( awk 'NR==2' /etc/resolv.conf | awk '{ print $2 }' )
 
 # Generate private keys for use by Ansible
@@ -95,6 +107,6 @@ sed -i -e "s/# Defaults    requiretty/Defaults    requiretty/" /etc/sudoers
 echo $(date) "- Adding OpenShift user"
 
 mkdir -p /etc/origin/master
-htpasswd -cb /etc/origin/master/htpasswd $SUDOUSER $PASSWORD
+htpasswd -cb /etc/origin/master/htpasswd labadmin $PASSWORD
 
 echo $(date) " - Script complete"
