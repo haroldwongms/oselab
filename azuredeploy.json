@@ -8,7 +8,7 @@
 				"description": "Base URL for Marketplace",
 				"artifactsBaseUrl": ""
 			},
-			"defaultValue": "https://raw.githubusercontent.com/haroldwongms/openshift-enterprise/master"
+			"defaultValue": "https://raw.githubusercontent.com/haroldwongms/oselab/master"
 		},
 		"osDiskStorageAccount": {
 			"type": "string",
