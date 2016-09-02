@@ -23,7 +23,7 @@ sleep 30
 # Register Host with Cloud Access Subscription
 echo $(date) " - Register host with Cloud Access Subscription"
 
-subscription-manager register --username=$USER --password=$PASSWORD
+subscription-manager register --username=$USER --password=$PASSWORD --force
 subscription-manager attach --pool=$POOL_ID
 
 # Disable all repositories and enable only the required ones
