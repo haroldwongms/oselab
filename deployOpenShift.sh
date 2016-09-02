@@ -14,6 +14,28 @@ NODEPREFIX=$7
 NODECOUNT=$8
 ROUTING=$9
 
+USER=$10
+PASSWORD=$11
+POOL_ID=$12
+
+sleep 30
+
+# Register Host with Cloud Access Subscription
+echo $(date) " - Register host with Cloud Access Subscription"
+
+subscription-manager register --username=$USER --password=$PASSWORD
+subscription-manager attach --pool=$POOL_ID
+
+# Disable all repositories and enable only the required ones
+echo $(date) " - Disabling all repositories and enabling only the required repos"
+
+subscription-manager repos --disable="*"
+
+subscription-manager repos \
+    --enable="rhel-7-server-rpms" \
+    --enable="rhel-7-server-extras-rpms" \
+    --enable="rhel-7-server-ose-3.2-rpms"
+	
 # Create thin pool logical volume for Docker
 echo $(date) " - Creating thin pool logical volume for Docker and staring service"
 

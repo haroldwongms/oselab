@@ -57,6 +57,27 @@
 				"description": "Administrator password for OpenShift Console"
 			}
 		},
+		"cloudAccessUsername": {
+			"type": "securestring",
+			"minLength": 1,
+			"metadata": {
+				"description": "Username for Red Hat subscription"
+			}
+		},
+		"cloudAccessPassword": {
+			"type": "securestring",
+			"minLength": 1,
+			"metadata": {
+				"description": "Password for Red Hat subscription"
+			}
+		},
+		"cloudAccessPoolId": {
+			"type": "securestring",
+			"minLength": 1,
+			"metadata": {
+				"description": "Pool ID that contains OpenShift entitlement"
+			}
+		},
 		"defaultSubDomain": {
 			"type": "string",
 			"metadata": {
@@ -94,7 +115,7 @@
 				]
 			},
 			"protectedSettings": {
-				"commandToExecute": "[concat('sh ', variables('openshiftDeploymentScriptFileName'), ' \"', parameters('adminUsername'), '\" \"', parameters('adminPassword'), '\" \"', parameters('sshPrivateKey'), '\" \"', parameters('openshiftMasterHostname'), '\" \"', parameters('openshiftMasterPublicIpFqdn'), '\" \"', parameters('openshiftMasterPublicIpAddress'), '\" \"', parameters('nodePrefix'), '\" \"', parameters('nodeInstanceCount'), '\" \"', parameters('defaultSubDomain'), '\"')]"
+				"commandToExecute": "[concat('sh ', variables('openshiftDeploymentScriptFileName'), ' \"', parameters('adminUsername'), '\" \"', parameters('adminPassword'), '\" \"', parameters('sshPrivateKey'), '\" \"', parameters('openshiftMasterHostname'), '\" \"', parameters('openshiftMasterPublicIpFqdn'), '\" \"', parameters('openshiftMasterPublicIpAddress'), '\" \"', parameters('nodePrefix'), '\" \"', parameters('nodeInstanceCount'), '\" \"', parameters('defaultSubDomain'), parameters('cloudAccessUsername'), '\" \"', parameters('cloudAccessPassword'), '\" \"', parameters('cloudAccessPoolId'), '\"', )]"
 			}
 		}
 	}],

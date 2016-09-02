@@ -104,6 +104,27 @@
 				"description": "Administrator password for OpenShift Console"
 			}
 		},
+		"cloudAccessUsername": {
+			"type": "string",
+			"minLength": 1,
+			"metadata": {
+				"description": "Cloud Access Username"
+			}
+		},
+		"cloudAccessPassword": {
+			"type": "securestring",
+			"minLength": 1,
+			"metadata": {
+				"description": "Cloud Access password"
+			}
+		},
+		"cloudAccessPoolId": {
+			"type": "string",
+			"minLength": 1,
+			"metadata": {
+				"description": "Pool ID with RHEL and OpenShift entitlements"
+			}
+		},
 		"sshPublicKey": {
 			"type": "securestring",
 			"metadata": {
@@ -782,7 +803,7 @@
 					]
 				},
 				"protectedSettings": {
-					"commandToExecute": "[concat('sh ', variables('nodePrepScriptFileName'))]"
+					"commandToExecute": "[concat('sh ', variables('nodePrepScriptFileName'), ' ', parameters('cloudAccessUsername'), ' ', parameters('cloudAccessPassword'), ' ', parameters('cloudAccessPoolId'))]"
 				}
 			}
 		}, {
@@ -823,6 +844,15 @@
 					},
 					"adminPassword": {
 						"value": "[parameters('adminPassword')]"
+					},
+					"cloudAccessUsername": {
+						"value": "[parameters('cloudAccessUsername')]"
+					},
+					"cloudAccessPassword": {
+						"value": "[parameters('cloudAccessPassword')]"
+					},
+					"cloudAccessPoolId": {
+						"value": "[parameters('cloudAccessPoolId')]"
 					},
 					"defaultSubDomain": {
 						"value": "[concat(reference(parameters('nodeLbPublicIpDnsLabelPrefix')).ipAddress, '.xip.io')]"
