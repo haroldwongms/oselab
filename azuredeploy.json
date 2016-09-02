@@ -12,7 +12,7 @@
 		},
 		"osDiskStorageAccount": {
 			"type": "string",
-			"defaultValue": "https://uuakwcpskldxwmsa.blob.core.windows.net/"
+			"defaultValue": "https://00ignitelabdisks808.blob.core.windows.net/"
 		},
 		"masterVmSize": {
 			"type": "string",
