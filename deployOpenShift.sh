@@ -18,6 +18,10 @@ RHUSER=$10
 RHPASSWORD=$11
 POOL_ID=$12
 
+echo "rhuser" $RHUSER
+echo "rhpassword" $RHPASSWORD
+echo "pool" $POOL_ID
+
 sleep 15
 
 # Register Host with Cloud Access Subscription
