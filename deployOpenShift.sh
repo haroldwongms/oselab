@@ -14,16 +14,16 @@ NODEPREFIX=$7
 NODECOUNT=$8
 ROUTING=$9
 
-USER=$10
-PASSWORD=$11
+RHUSER=$10
+RHPASSWORD=$11
 POOL_ID=$12
 
-sleep 30
+sleep 15
 
 # Register Host with Cloud Access Subscription
 echo $(date) " - Register host with Cloud Access Subscription"
 
-subscription-manager register --username=$USER --password=$PASSWORD --force
+subscription-manager register --username=$RHUSER --password=$RHPASSWORD --force
 subscription-manager attach --pool=$POOL_ID
 
 # Disable all repositories and enable only the required ones
