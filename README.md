@@ -54,13 +54,16 @@ You will need to create a Key Vault to store your SSH Private Key that will then
 7.  nodeInstanceCount: Number of Nodes to deploy
 8.  adminUsername: Admin username for OS login
 9.  adminPassword: Admin password for OpenShift login
-10. sshPublicKey: Copy your SSH Public Key here
-11. subscriptionId: Your Subscription ID<br/>
+10. cloudAccessUsername: Your Cloud Access subscription user name
+11. cloudAccessPassword: The password for your Cloud Access subscription
+12. cloudAccessPoolId: The Pool ID that contains your RHEL and OpenShift subscriptions
+13. sshPublicKey: Copy your SSH Public Key here
+14. subscriptionId: Your Subscription ID<br/>
     a. PowerShell: get-AzureAccount
 	b. Azure CLI: azure account show  - Field is ID
-12. keyVaultResourceGroup: The name of the Resource Group that contains the Key Vault
-13. keyVaultName: The name of the Key Vault you created
-14. keyVaultSecret: The Secret Name you used when creating the Secret
+15. keyVaultResourceGroup: The name of the Resource Group that contains the Key Vault
+16. keyVaultName: The name of the Key Vault you created
+17. keyVaultSecret: The Secret Name you used when creating the Secret
 
 ## Deploy Template
 
