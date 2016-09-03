@@ -115,7 +115,7 @@
 				]
 			},
 			"protectedSettings": {
-				"commandToExecute": "[concat('sh ', variables('openshiftDeploymentScriptFileName'), ' \"', parameters('adminUsername'), '\" \"', parameters('adminPassword'), '\" \"', parameters('sshPrivateKey'), '\" \"', parameters('openshiftMasterHostname'), '\" \"', parameters('openshiftMasterPublicIpFqdn'), '\" \"', parameters('openshiftMasterPublicIpAddress'), '\" \"', parameters('nodePrefix'), '\" \"', parameters('nodeInstanceCount'), '\" \"', parameters('defaultSubDomain'), '\" \"', parameters('cloudAccessUsername'), '\" \"', parameters('cloudAccessPassword'), '\" \"', parameters('cloudAccessPoolId'), '\"')]"
+				"commandToExecute": "[concat('bash ', variables('openshiftDeploymentScriptFileName'), ' \"', parameters('adminUsername'), '\" \"', parameters('adminPassword'), '\" \"', parameters('sshPrivateKey'), '\" \"', parameters('openshiftMasterHostname'), '\" \"', parameters('openshiftMasterPublicIpFqdn'), '\" \"', parameters('openshiftMasterPublicIpAddress'), '\" \"', parameters('nodePrefix'), '\" \"', parameters('nodeInstanceCount'), '\" \"', parameters('defaultSubDomain'), '\" \"', parameters('cloudAccessUsername'), '\" \"', parameters('cloudAccessPassword'), '\" \"', parameters('cloudAccessPoolId'), '\"')]"
 			}
 		}
 	}],
