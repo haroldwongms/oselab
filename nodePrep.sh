@@ -19,10 +19,12 @@ subscription-manager repos --disable="*"
 subscription-manager repos \
     --enable="rhel-7-server-rpms" \
     --enable="rhel-7-server-extras-rpms" \
-    --enable="rhel-7-server-ose-3.2-rpms"
+    --enable="rhel-7-server-ose-3.3-rpms"
 
 # Create thin pool logical volume for Docker
 echo $(date) " - Creating thin pool logical volume for Docker and staring service"
+
+sed -i -e "s#^OPTIONS='--selinux-enabled'#OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16'#" /etc/sysconfig/docker
 
 echo "DEVS=/dev/sdc" >> /etc/sysconfig/docker-storage-setup
 echo "VG=docker-vg" >> /etc/sysconfig/docker-storage-setup

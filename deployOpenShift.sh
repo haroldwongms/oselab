@@ -34,11 +34,12 @@ subscription-manager repos --disable="*"
 subscription-manager repos \
     --enable="rhel-7-server-rpms" \
     --enable="rhel-7-server-extras-rpms" \
-    --enable="rhel-7-server-ose-3.2-rpms"
+    --enable="rhel-7-server-ose-3.3-rpms"
 	
 # Create thin pool logical volume for Docker
 echo $(date) " - Creating thin pool logical volume for Docker and staring service"
 
+sed -i -e "s#^OPTIONS='--selinux-enabled'#OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16'#" /etc/sysconfig/docker
 echo "DEVS=/dev/sdc" >> /etc/sysconfig/docker-storage-setup
 echo "VG=docker-vg" >> /etc/sysconfig/docker-storage-setup
 docker-storage-setup
@@ -76,11 +77,9 @@ nodes
 # Set variables common for all OSEv3 hosts
 [OSEv3:vars]
 ansible_ssh_user=$SUDOUSER
-#ansible_sudo=true
 ansible_become=yes
 deployment_type=openshift-enterprise
 docker_udev_workaround=True
-# containerized=true
 openshift_use_dnsmasq=no
 openshift_master_default_subdomain=$ROUTING
 
@@ -92,16 +91,16 @@ openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 
 
 # host group for masters
 [masters]
-$MASTER.$DOMAIN
+$MASTER
 
 # host group for nodes
 [nodes]
-$MASTER.$DOMAIN openshift_node_labels="{'region': 'infra', 'zone': 'default'}" openshift_schedulable=true
+$MASTER openshift_node_labels="{'region': 'master', 'zone': 'default'}"
 EOF
 
 for (( c=0; c<$NODECOUNT; c++ ))
 do
-  echo "$NODEPREFIX-$c.$DOMAIN" >> /etc/ansible/hosts
+  echo "$NODE-$c openshift_node_labels=\"{'region': 'infra', 'zone': 'default'}\"" >> /etc/ansible/hosts
 done
 
 
@@ -119,7 +118,8 @@ sed -i -e '/Defaults    env_keep += "LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSE
 
 echo $(date) "- Deploying Router"
 
-runuser -l $SUDOUSER -c "sudo oadm router osrouter --replicas=$NODECOUNT --credentials=/etc/origin/master/openshift-router.kubeconfig --service-account=router"
+# Router deploys automatically to Infra node
+#runuser -l $SUDOUSER -c "sudo oadm router osrouter --replicas=$NODECOUNT --credentials=/etc/origin/master/openshift-router.kubeconfig --service-account=router"
 
 echo $(date) "- Re-enabling requiretty"
 
