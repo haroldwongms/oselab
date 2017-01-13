@@ -88,6 +88,6 @@ sed -i -e "s/# Defaults    requiretty/Defaults    requiretty/" /etc/sudoers
 echo $(date) "- Adding OpenShift user"
 
 mkdir -p /etc/origin/master
-htpasswd -cb /etc/origin/master/htpasswd labadmin $PASSWORD
+htpasswd -cb /etc/origin/master/htpasswd testdrive $PASSWORD
 
 echo $(date) " - Script complete"
