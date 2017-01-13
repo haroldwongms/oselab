@@ -65,7 +65,7 @@
 		}
 	},
 	"variables": {
-		"openshiftDeploymentScriptUrl": "[concat(parameters('_artifactsLocation'), '/deployOpenShift.sh')]",
+		"openshiftDeploymentScriptUrl": "[concat(parameters('_artifactsLocation'), 'deployOpenShift.sh')]",
 		"openshiftDeploymentScriptFileName": "deployOpenShift.sh"
 	},
 	"resources": [{

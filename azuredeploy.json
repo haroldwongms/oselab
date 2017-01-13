@@ -8,7 +8,7 @@
 				"description": "Base URL for Template FIles",
 				"artifactsBaseUrl": ""
 			},
-			"defaultValue": "https://raw.githubusercontent.com/haroldwongms/openshift-enterprise/master"
+			"defaultValue": "https://raw.githubusercontent.com/haroldwongms/oselab/master/"
 		},
 		"masterVmSize": {
 			"type": "string",
@@ -169,11 +169,11 @@
 		},
 		"imageReference": "[variables('osType')]",
 		"sshKeyPath": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
-		"nodePrepScriptUrl": "[concat(parameters('_artifactsLocation'), '/nodePrep.sh')]",
-		"masterPrepScriptUrl": "[concat(parameters('_artifactsLocation'), '/masterPrep.sh')]",
+		"nodePrepScriptUrl": "[concat(parameters('_artifactsLocation'), 'nodePrep.sh')]",
+		"masterPrepScriptUrl": "[concat(parameters('_artifactsLocation'), 'masterPrep.sh')]",
 		"nodePrepScriptFileName": "nodePrep.sh",
 		"masterPrepScriptFileName": "masterPrep.sh",
-		"openshiftDeploymentTemplateUrl": "[concat(parameters('_artifactsLocation'), '/openshiftdeploy.json')]",
+		"openshiftDeploymentTemplateUrl": "[concat(parameters('_artifactsLocation'), 'openshiftdeploy.json')]",
 		"vmSizesMap": {
 			"Standard_A4": {
 				"storageAccountType": "Standard_LRS"
