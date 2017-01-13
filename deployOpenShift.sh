@@ -11,43 +11,7 @@ MASTER=$4
 MASTERPUBLICIPHOSTNAME=$5
 MASTERPUBLICIPADDRESS=$6
 NODE=$7
-NODECOUNT=$8
-ROUTING=$9
-
-RHUSER=${10}
-RHPASSWORD=${11}
-POOL_ID=${12}
-
-sleep 15
-
-# Register Host with Cloud Access Subscription
-echo $(date) " - Register host with Cloud Access Subscription"
-
-subscription-manager register --username=$RHUSER --password=$RHPASSWORD --force
-subscription-manager attach --pool=$POOL_ID
-
-# Disable all repositories and enable only the required ones
-echo $(date) " - Disabling all repositories and enabling only the required repos"
-
-subscription-manager repos --disable="*"
-
-subscription-manager repos \
-    --enable="rhel-7-server-rpms" \
-    --enable="rhel-7-server-extras-rpms" \
-    --enable="rhel-7-server-ose-3.3-rpms"
-	
-# Create thin pool logical volume for Docker
-echo $(date) " - Creating thin pool logical volume for Docker and staring service"
-
-sed -i -e "s#^OPTIONS='--selinux-enabled'#OPTIONS='--selinux-enabled --insecure-registry 172.30.0.0/16'#" /etc/sysconfig/docker
-echo "DEVS=/dev/sdc" >> /etc/sysconfig/docker-storage-setup
-echo "VG=docker-vg" >> /etc/sysconfig/docker-storage-setup
-docker-storage-setup
-
-# Enable and start Docker services
-
-systemctl enable docker
-systemctl start docker
+ROUTING=$8
 
 DOMAIN=$( awk 'NR==2' /etc/resolv.conf | awk '{ print $2 }' )
 
@@ -96,13 +60,8 @@ $MASTER
 # host group for nodes
 [nodes]
 $MASTER openshift_node_labels="{'region': 'master', 'zone': 'default'}"
+$NODE openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
 EOF
-
-for (( c=0; c<$NODECOUNT; c++ ))
-do
-  echo "$NODE-$c openshift_node_labels=\"{'region': 'infra', 'zone': 'default'}\"" >> /etc/ansible/hosts
-done
-
 
 # Initiating installation of OpenShift Enterprise using Ansible Playbook
 echo $(date) " - Installing OpenShift Enterprise via Ansible Playbook"

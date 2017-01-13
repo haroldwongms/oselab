@@ -2,7 +2,7 @@
 	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",
 	"parameters": {
-		"baseUrl": {
+		"_artifactsLocation": {
 			"type": "string",
 			"metadata": {
 				"description": "Base URL for script location"
@@ -29,18 +29,11 @@
 				"description": "OpenShift Master VM public IP address"
 			}
 		},
-		"nodePrefix": {
+		"openshiftNodeHostname": {
 			"type": "string",
 			"minLength": 1,
 			"metadata": {
-				"description": "OpenShift Node VM prefix"
-			}
-		},
-		"nodeInstanceCount": {
-			"type": "int",
-			"minValue": 1,
-			"metadata": {
-				"description": "Number of OpenShift nodes"
+				"description": "OpenShift Node hostname"
 			}
 		},
 		"adminUsername": {
@@ -50,38 +43,17 @@
 				"description": "Administrator username on all VMs"
 			}
 		},
-		"adminPassword": {
+		"openshiftPassword": {
 			"type": "securestring",
 			"minLength": 1,
 			"metadata": {
 				"description": "Administrator password for OpenShift Console"
 			}
 		},
-		"cloudAccessUsername": {
-			"type": "securestring",
-			"minLength": 1,
-			"metadata": {
-				"description": "Username for Red Hat subscription"
-			}
-		},
-		"cloudAccessPassword": {
-			"type": "securestring",
-			"minLength": 1,
-			"metadata": {
-				"description": "Password for Red Hat subscription"
-			}
-		},
-		"cloudAccessPoolId": {
-			"type": "securestring",
-			"minLength": 1,
-			"metadata": {
-				"description": "Pool ID that contains OpenShift entitlement"
-			}
-		},
-		"defaultSubDomain": {
+		"xipioDomain": {
 			"type": "string",
 			"metadata": {
-				"description": "Default Subdomain for application routing"
+				"description": "Xip.io Subdomain for application routing"
 			}
 		},
 		"sshPrivateKey": {
@@ -93,7 +65,7 @@
 		}
 	},
 	"variables": {
-		"openshiftDeploymentScriptUrl": "[concat(parameters('baseUrl'), '/deployOpenShift.sh')]",
+		"openshiftDeploymentScriptUrl": "[concat(parameters('_artifactsLocation'), '/deployOpenShift.sh')]",
 		"openshiftDeploymentScriptFileName": "deployOpenShift.sh"
 	},
 	"resources": [{
@@ -115,7 +87,7 @@
 				]
 			},
 			"protectedSettings": {
-				"commandToExecute": "[concat('bash ', variables('openshiftDeploymentScriptFileName'), ' \"', parameters('adminUsername'), '\" \"', parameters('adminPassword'), '\" \"', parameters('sshPrivateKey'), '\" \"', parameters('openshiftMasterHostname'), '\" \"', parameters('openshiftMasterPublicIpFqdn'), '\" \"', parameters('openshiftMasterPublicIpAddress'), '\" \"', parameters('nodePrefix'), '\" \"', parameters('nodeInstanceCount'), '\" \"', parameters('defaultSubDomain'), '\" \"', parameters('cloudAccessUsername'), '\" \"', parameters('cloudAccessPassword'), '\" \"', parameters('cloudAccessPoolId'), '\"')]"
+				"commandToExecute": "[concat('bash ', variables('openshiftDeploymentScriptFileName'), ' \"', parameters('adminUsername'), '\" \"', parameters('openshiftPassword'), '\" \"', parameters('sshPrivateKey'), '\" \"', parameters('openshiftMasterHostname'), '\" \"', parameters('openshiftMasterPublicIpFqdn'), '\" \"', parameters('openshiftMasterPublicIpAddress'), '\" \"', parameters('openshiftNodeHostname'), '\" \"', parameters(parameters('xipioDomain')), '\"')]"
 			}
 		}
 	}],
