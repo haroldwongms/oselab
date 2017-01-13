@@ -63,8 +63,8 @@ $MASTER openshift_node_labels="{'region': 'master', 'zone': 'default'}"
 $NODE openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
 EOF
 
-# Initiating installation of OpenShift Enterprise using Ansible Playbook
-echo $(date) " - Installing OpenShift Enterprise via Ansible Playbook"
+# Initiating installation of OpenShift Container Platform using Ansible Playbook
+echo $(date) " - Installing OpenShift Container Platform via Ansible Playbook"
 
 runuser -l $SUDOUSER -c "ansible-playbook /usr/share/ansible/openshift-ansible/playbooks/byo/config.yml"
 
@@ -77,7 +77,7 @@ sed -i -e '/Defaults    env_keep += "LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSE
 
 echo $(date) "- Deploying Router"
 
-# Router deploys automatically to Infra node
+# Router deploys automatically to node with infra label
 #runuser -l $SUDOUSER -c "sudo oadm router osrouter --replicas=$NODECOUNT --credentials=/etc/origin/master/openshift-router.kubeconfig --service-account=router"
 
 echo $(date) "- Re-enabling requiretty"
