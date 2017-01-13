@@ -145,13 +145,6 @@
 		"masterLbHttpProbeId": "[concat(variables('masterLbId'),'/probes/httpProbe')]",
 		"masterLb8443ProbeId": "[concat(variables('masterLbId'),'/probes/8443Probe')]",
 
-		"infraLoadBalancerName": "[concat(variables('openshiftInfraHostname'), 'lb')]",
-		"infraPublicIpAddressId": "[resourceId('Microsoft.Network/publicIPAddresses', variables('infraLbPublicIpDnsLabel'))]",
-		"infraLbId": "[resourceId('Microsoft.Network/loadBalancers', variables('infraLoadBalancerName'))]",
-		"infraLbFrontEndConfigId": "[concat(variables('infraLbId'), '/frontendIPConfigurations/loadBalancerFrontEnd')]",
-		"infraLbBackendPoolId": "[concat(variables('infraLbId'),'/backendAddressPools/loadBalancerBackend')]",
-		"infraLbHttpProbeId": "[concat(variables('infraLbId'),'/probes/httpProbe')]",
-		"infraLbHttpsProbeId": "[concat(variables('infraLbId'),'/probes/httpsProbe')]",
 		"osType": {
 			"publisher": "RedHat",
 			"offer": "RHEL",
@@ -592,32 +585,6 @@
 						}],
 						"loadBalancerInboundNatRules": [{
 							"id": "[concat(variables('masterLbId'),'/inboundNatRules/SSH-', variables('openshiftMasterHostname'))]"
-						}]
-					}
-				}]
-			}
-		}, {
-			"type": "Microsoft.Network/networkInterfaces",
-			"name": "[concat(variables('openshiftInfraHostname'), 'nic')]",
-			"location": "[variables('location')]",
-			"apiVersion": "[variables('apiVersionNetwork')]",
-			"tags": {
-				"displayName": "OpenShiftInfraNetworkInterfaces"
-			},
-			"dependsOn": [
-				"[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]",
-				"[concat('Microsoft.Network/loadBalancers/', variables('infraLoadBalancerName'))]"
-			],
-			"properties": {
-				"ipConfigurations": [{
-					"name": "[concat(variables('openshiftInfraHostname'), 'ipconfig')]",
-					"properties": {
-						"privateIPAllocationMethod": "Dynamic",
-						"subnet": {
-							"id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'), '/subnets/', variables('nodeSubnetName'))]"
-						},
-						"loadBalancerBackendAddressPools": [{
-							"id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('infraLoadBalancerName'), '/backendAddressPools/loadBalancerBackEnd')]"
 						}]
 					}
 				}]
