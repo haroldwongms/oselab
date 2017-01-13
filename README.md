@@ -45,26 +45,18 @@ You will need to create a Key Vault to store your SSH Private Key that will then
 
 ### azuredeploy.Parameters.json File Explained
 
-1.	baseUrl: Artifacts URL for where template files are located
-2.	osDiskStorageAccount: Blob URL for where the master.vhd and node.vhd files are located
-3.	masterVmSize: Select from one of the allowed VM sizes listed in the azuredeploy.json file
-4.	nodeVmSize: Select from one of the allowed VM sizes listed in the azuredeploy.json file
-5.	openshiftMasterHostName: Host name for the Master Node
-6.	openshiftMasterPublicIpDnsLabelPrefix: A unique Public DNS name to reference the Master Node by
-7.	nodePrefix: prefix to be prepended to create host names for the Nodes
-8.	nodeLbPublicIpDnsLabelPrefix: A unique Public DNS name to reference the Node Load Balancer by. Used to access deployed applications
-9.	nodeInstanceCount: Number of Nodes to deploy
-10.	adminUsername: Admin username for OS login
-11.	adminPassword: Admin password for OpenShift login
-12.	cloudAccessUsername: Your Cloud Access subscription user name
-13.	cloudAccessPassword: The password for your Cloud Access subscription
-14.	cloudAccessPoolId: The Pool ID that contains your RHEL and OpenShift subscriptions
-15.	sshPublicKey: Copy your SSH Public Key here
-16.	subscriptionId: Your Azure Subscription ID
-17.	PowerShell: get-AzureAccount b. Azure CLI: azure account show - Field is ID
-18.	keyVaultResourceGroup: The name of the Resource Group that contains the Key Vault
-19.	keyVaultName: The name of the Key Vault you created
-20.	keyVaultSecret: The Secret Name you used when creating the Secret
+1.	_artifactsLocation: Artifacts URL for where template files are located
+2.	masterVmSize: Select from one of the allowed VM sizes listed in the azuredeploy.json file
+3.	nodeVmSize: Select from one of the allowed VM sizes listed in the azuredeploy.json file
+4.	openshiftClusterPrefix: Cluster prefix used to generate Master and Node host names
+5.	adminUsername: Admin username for OS login
+6.	cloudAccessUsername: Your Cloud Access subscription user name
+7.	cloudAccessPassword: The password for your Cloud Access subscription
+8.	cloudAccessPoolId: The Pool ID that contains your RHEL and OpenShift subscriptions
+9.	sshPublicKey: Copy your SSH Public Key here
+10.	keyVaultResourceGroup: The name of the Resource Group that contains the Key Vault
+11.	keyVaultName: The name of the Key Vault you created
+12.	keyVaultSecret: The Secret Name you used when creating the Secret
 
 
 ## Deploy Template
