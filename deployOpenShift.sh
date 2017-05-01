@@ -13,8 +13,6 @@ MASTERPUBLICIPADDRESS=$6
 NODE=$7
 ROUTING=$8
 
-DOMAIN=$( awk 'NR==2' /etc/resolv.conf | awk '{ print $2 }' )
-
 # Generate private keys for use by Ansible
 echo $(date) " - Generating Private keys for use by Ansible for OpenShift Installation"
 
@@ -43,9 +41,15 @@ nodes
 ansible_ssh_user=$SUDOUSER
 ansible_become=yes
 deployment_type=openshift-enterprise
+openshift_release=v3.5
 docker_udev_workaround=True
 openshift_use_dnsmasq=no
 openshift_master_default_subdomain=$ROUTING
+openshift_override_hostname_check=true
+osm_default_node_selector='type=app'
+
+openshift_router_selector='type=app'
+openshift_registry_selector='type=app'
 
 openshift_master_cluster_public_hostname=$MASTERPUBLICIPHOSTNAME
 openshift_master_cluster_public_vip=$MASTERPUBLICIPADDRESS
@@ -59,8 +63,8 @@ $MASTER
 
 # host group for nodes
 [nodes]
-$MASTER openshift_node_labels="{'region': 'master', 'zone': 'default'}"
-$NODE openshift_node_labels="{'region': 'infra', 'zone': 'default'}"
+$MASTER openshift_node_labels="{'region': 'master', 'zone': 'default'}" openshift_hostname=$MASTER
+$NODE openshift_node_labels="{'region': 'app', 'zone': 'default'}" openshift_hostname=$NODE
 EOF
 
 # Initiating installation of OpenShift Container Platform using Ansible Playbook
@@ -73,12 +77,11 @@ echo $(date) " - Modifying sudoers"
 sed -i -e "s/Defaults    requiretty/# Defaults    requiretty/" /etc/sudoers
 sed -i -e '/Defaults    env_keep += "LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY"/aDefaults    env_keep += "PATH"' /etc/sudoers
 
+# Deploying Registry
+echo $(date) "- Registry automatically deployed to app node"
+
 # Deploying Router
-
-echo $(date) "- Deploying Router"
-
-# Router deploys automatically to node with infra label
-#runuser -l $SUDOUSER -c "sudo oadm router osrouter --replicas=$NODECOUNT --credentials=/etc/origin/master/openshift-router.kubeconfig --service-account=router"
+echo $(date) "- Router automaticaly deployed to app node"
 
 echo $(date) "- Re-enabling requiretty"
 

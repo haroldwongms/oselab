@@ -134,7 +134,7 @@
 
 		"openshiftMasterPublicIpDnsLabel": "[concat(variables('openshiftMasterHostname'), 'dns', take(uniqueString(concat(resourceGroup().name, 'mdns')), 8))]",
 		"nodeLbPublicIpDnsLabel": "[concat(variables('openshiftNodeHostname'), 'dns', take(uniqueString(concat(resourceGroup().name, 'ndns')), 8))]",
-		"dataDiskSize": "25",
+		"dataDiskSize": "128",
 		"openshiftPassword": "password",
 
 		"masterLoadBalancerName": "[concat(variables('openshiftMasterHostname'), 'lb')]",
