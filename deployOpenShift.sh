@@ -63,8 +63,8 @@ $MASTER
 
 # host group for nodes
 [nodes]
-$MASTER openshift_node_labels="{'region': 'master', 'zone': 'default'}" openshift_hostname=$MASTER
-$NODE openshift_node_labels="{'region': 'app', 'zone': 'default'}" openshift_hostname=$NODE
+$MASTER openshift_node_labels="{'type': 'master', 'zone': 'default'}" openshift_hostname=$MASTER
+$NODE openshift_node_labels="{'type': 'app', 'zone': 'default'}" openshift_hostname=$NODE
 EOF
 
 # Initiating installation of OpenShift Container Platform using Ansible Playbook
